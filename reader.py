@@ -45,25 +45,20 @@ class Reader():
     def read_float_double(self)->int:
         return struct.unpack('d', self.file.read(8))[0]
 
-
-    def _ueb128(self):
-        t = 0
-        s = 0
-        while (True):
-            byte = self.read_byte()
-            t |= ((byte & 0x7F) << s)
-            if (byte & 0x80) == 0:
-                break
-            s += 7
-        return t
-
     def read_string(self)->(str, None):
 
         start = self.file.read(1)
         if int.from_bytes(start, byteorder='little') == 0:
             return None
 
-        length = self._ueb128()
+        length = 0
+        s = 0
+        while True:
+            byte = self.read_byte()
+            length |= ((byte & 0x7F) << s)
+            if(byte & 0x80) == 0:
+                break
+            s += 7
         return self.file.read(length).decode('utf-8')
 
     def read_dictionary(self)->(dict,None):
