@@ -26,7 +26,7 @@ class Database:
         db.username = r.read_string()
         db.beatmap_count = r.read_int32()
         db.beatmaps = [Beatmap.from_reader(r) for x in range(db.beatmap_count)]
-        db.user_level = r.read_byte()
+        db.user_level = r.read_int16()
         return db
 
     def write_binary(self, w: Writer):
@@ -38,14 +38,14 @@ class Database:
         w.write_int32(len(db.beatmaps))
         for beatmap in db.beatmaps:
             beatmap.save(w)
-        w.write_byte(db.user_level)
+        w.write_int16(db.user_level)
 
 
 if __name__ == "__main__":
     f = open('osu!.db', 'rb')
     r = Reader(f)
     db = Database.from_reader(r)
-    #print(json.dumps(db.beatmaps[0],default=json_parser,indent=4))
+    #print(json.dumps(db.user_level,default=json_parser,indent=4))
     f.close()
     f2 = open('test.db', 'wb')
     w = Writer(f2)

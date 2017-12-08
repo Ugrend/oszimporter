@@ -88,8 +88,9 @@ class Beatmap:
             w.write_int32(len(starRating))
             for k,v in starRating.items():
                 # TODO: store type in dict so we programmatically know how to store the dictionary
-                # TODO: DATA CORRUPTING HERE NEED TO FIX
+                w.write_byte(8)
                 w.write_int32(k)
+                w.write_byte(13)
                 w.write_float64(v)
 
         w.write_int32(self.DrainTimeSeconds)
