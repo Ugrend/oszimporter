@@ -5,6 +5,7 @@ from reader import Reader
 
 class Beatmap:
 
+    data_length: int
     Artist: str
     ArtistUnicode: str
     Title: str
@@ -57,6 +58,7 @@ class Beatmap:
     @staticmethod
     def from_reader(reader: Reader):
         beatmap = Beatmap()
+        beatmap.data_length = reader.read_int32()
         beatmap.Artist = reader.read_string()
         beatmap.ArtistUnicode = reader.read_string()
         beatmap.Title = reader.read_string()
@@ -72,11 +74,11 @@ class Beatmap:
         beatmap.Sliders = reader.read_int16()
         beatmap.Spinners = reader.read_int16()
         beatmap.Modified = reader.read_ticks()
-        beatmap.AR = reader.read_float_single()
-        beatmap.CS = reader.read_float_single()
-        beatmap.HP = reader.read_float_single()
-        beatmap.OD = reader.read_float_single()
-        beatmap.SliderVelocity = reader.read_float_double()
+        beatmap.AR = reader.read_float32()
+        beatmap.CS = reader.read_float32()
+        beatmap.HP = reader.read_float32()
+        beatmap.OD = reader.read_float32()
+        beatmap.SliderVelocity = reader.read_float64()
         beatmap.StarRating = [reader.read_dictionary() for x in range(0,4)]
         beatmap.DrainTimeSeconds = reader.read_int32()
         beatmap.Length = reader.read_int32()
@@ -87,7 +89,7 @@ class Beatmap:
         beatmap.TopicId = reader.read_int32()
         beatmap.ranks = [reader.read_byte() for x in range (0,4)]
         beatmap.Offset = reader.read_int16()
-        beatmap.StackLeniency = reader.read_float_single()
+        beatmap.StackLeniency = reader.read_float32()
         beatmap.GameMode = reader.read_byte()
         beatmap.Source = reader.read_string()
         beatmap.Tags = reader.read_string()

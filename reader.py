@@ -4,8 +4,7 @@ from datetime import datetime, timedelta
 import struct
 
 
-
-class Reader():
+class Reader:
 
     def __init__(self, file_handle: io.FileIO):
         self.file = file_handle
@@ -19,7 +18,7 @@ class Reader():
         if t == 8:
             return self.read_int32()
         if t == 13:
-            return self.read_float_double()
+            return self.read_float64()
 
         raise Exception("I don't know what this byte means %d" %t)
 
@@ -36,13 +35,14 @@ class Reader():
         return bool(int.from_bytes(self.file.read(1), byteorder='little'))
 
     def read_ticks(self)->int:
+        # TODO: convert to datetime
         ticks = int.from_bytes(self.file.read(8), byteorder='little', signed=True)
         return ticks
 
-    def read_float_single(self)-> int:
-        return struct.unpack('f',self.file.read(4))[0]
+    def read_float32(self)-> int:
+        return struct.unpack('f', self.file.read(4))[0]
 
-    def read_float_double(self)->int:
+    def read_float64(self)->int:
         return struct.unpack('d', self.file.read(8))[0]
 
     def read_string(self)->(str, None):
@@ -61,7 +61,7 @@ class Reader():
             s += 7
         return self.file.read(length).decode('utf-8')
 
-    def read_dictionary(self)->(dict,None):
+    def read_dictionary(self)->(dict, None):
         length = self.read_int32()
         if length < 0:
             return None
@@ -80,8 +80,8 @@ class Reader():
         while count != length:
             count += 1
             result.append({
-                "beat_length": self.read_float_double(),
-                "offset": self.read_float_double(),
+                "beat_length": self.read_float64(),
+                "offset": self.read_float64(),
                 "timing_change": self.read_boolean()
             })
         return result

@@ -1,28 +1,34 @@
-__author__ = 'Ugrend'
-
 from reader import Reader
 from Beatmap import Beatmap
+from helpers import json_parser
+import json
+__author__ = 'Ugrend'
+
+
+class Database:
+    version: int
+    folder_count: int
+    account_unlocked: bool
+    unlock_date: int
+    username: str
+    beatmap_count: int
+    beatmaps: list
+
+    @staticmethod
+    def from_reader(r: Reader):
+        db = Database()
+        db.version = r.read_int32()
+        db.folder_count = r.read_int32()
+        db.account_unlocked = r.read_boolean()
+        db.unlock_date = r.read_ticks()
+        db.username = r.read_string()
+        db.beatmap_count = r.read_int32()
+        db.beatmaps = [Beatmap.from_reader(r) for x in range(db.beatmap_count)]
+        return db
 
 if __name__ == "__main__":
-    database = {
-
-        "beatmaps": []
-
-    }
     f = open('osu!.db', 'rb')
     r = Reader(f)
-    print(r.read_int32())
-    print(r.read_int32())
-    print(r.read_boolean())
-    print(r.read_ticks())
-    print(r.read_string())
-    length = r.read_int32()
-    print(length)
-    count = 0
-    while count <= length:
-        entry_length = r.read_int32()
-        b = Beatmap.from_reader(r)
-        database["beatmaps"].append(b.__dict__)
-        count += 1
-    print(database)
+    db = Database.from_reader(r)
+    print(json.dumps(db,default=json_parser,indent=4))
     f.close()
