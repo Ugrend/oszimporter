@@ -30,19 +30,19 @@ class Writer:
     def write_string(self, v: str):
         if v is None:
             v = ""
-        length = len(v)
+        length = len(v.encode('utf-8'))
         if length == 0:
             self.write_byte(0x0B)
             self.write_byte(0)
             return
 
-        _bStr = pack('b', 0x0B)
+        b_strlen = pack('b', 0x0B)
         while length != 0:
             _b = (length & 0x7F)
             length >>= 7
             if length != 0:
                 _b |= 0x80
-            _bStr += pack('B', _b)
-        _bStr += pack(str(len(v))+'s', bytes(v, encoding='utf-8'))
-        self.writer.write(_bStr)
+            b_strlen += pack('B', _b)
 
+        self.writer.write(b_strlen)
+        self.writer.write(v.encode('utf-8'))

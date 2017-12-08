@@ -1,6 +1,5 @@
 __author__ = 'Ugrend'
 import io
-from datetime import datetime, timedelta
 import struct
 
 
@@ -50,16 +49,16 @@ class Reader:
         start = self.file.read(1)
         if int.from_bytes(start, byteorder='little') == 0:
             return None
-
         length = 0
         s = 0
         while True:
             byte = self.read_byte()
             length |= ((byte & 0x7F) << s)
-            if(byte & 0x80) == 0:
+            if(byte & (1 << 7)) == 0:
                 break
             s += 7
-        return self.file.read(length).decode('utf-8')
+        data = self.file.read(length)
+        return data.decode('utf-8')
 
     def read_dictionary(self)->(dict, None):
         length = self.read_int32()
@@ -81,7 +80,7 @@ class Reader:
         while count != length:
             count += 1
             result.append({
-                "beat_length": self.read_float64(),
+                "bpm": self.read_float64(),
                 "offset": self.read_float64(),
                 "timing_change": self.read_boolean()
             })
