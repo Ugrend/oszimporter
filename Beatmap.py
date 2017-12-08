@@ -2,6 +2,8 @@ __author__ = 'Ugrend'
 
 from datetime import datetime
 from reader import Reader
+from writer import  Writer
+from io import BytesIO
 
 class Beatmap:
 
@@ -53,8 +55,34 @@ class Beatmap:
     edited: int
     mania_scroll_speed: int
 
-    def to_binary(self):
-        pass
+    def save(self, w: Writer):
+        binary_self = self.to_binary()
+        w.write_int32(binary_self.getbuffer().nbytes)
+        w.writer.write(binary_self.getvalue())
+
+    def to_binary(self)->BytesIO:
+        b = BytesIO()
+        w = Writer(b)
+        w.write_string(self.Artist)
+        w.write_string(self.ArtistUnicode)
+        w.write_string(self.Title)
+        w.write_string(self.TitleUnicode)
+        w.write_string(self.Creator)
+        w.write_string(self.Version)
+        w.write_string(self.AudioFileName)
+        w.write_string(self.BeatmapChecksum)
+        w.write_string(self.BeatmapFileName)
+        w.write_boolean(self.RankedStatus)
+        w.write_int16(self.Circles)
+        w.write_int16(self.Sliders)
+        w.write_int16(self.Spinners)
+        w.write_ticks(self.Modified)
+        w.write_float32(self.AR)
+        w.write_float32(self.CS)
+        w.write_float32(self.HP)
+        w.write_float32(self.OD)
+        w.write_float64(self.SliderVelocity)
+        return b
 
     @staticmethod
     def from_reader(reader: Reader):

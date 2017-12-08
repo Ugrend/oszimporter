@@ -35,6 +35,9 @@ class Database:
         w.write_boolean(self.account_unlocked)
         w.write_ticks(self.unlock_date)
         w.write_string(self.username)
+        w.write_int32(len(db.beatmaps))
+        for beatmap in db.beatmaps:
+            beatmap.save(w)
 
 
 if __name__ == "__main__":

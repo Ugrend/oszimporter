@@ -3,7 +3,7 @@ from struct import pack
 
 class Writer:
 
-    def __init__(self, writer: io.FileIO):
+    def __init__(self, writer: (io.FileIO, io.BytesIO)):
         self.writer = writer
 
     def write_byte(self, v: int):
