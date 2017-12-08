@@ -53,7 +53,8 @@ class Beatmap:
     edited: int
     mania_scroll_speed: int
 
-
+    def to_binary(self):
+        pass
 
     @staticmethod
     def from_reader(reader: Reader):

@@ -71,6 +71,7 @@ class Reader:
             count += 1
             key = self.parse_dict_value()
             dictionary[key] = self.parse_dict_value()
+
         return dictionary
 
     def read_timing_points(self)-> list:
