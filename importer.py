@@ -27,9 +27,9 @@ def process_osu_files(map_dir)->List[Beatmap]:
     return beatmaps
 
 
-def import_osz(osz_file, destination, database:Database):
+def import_osz(osz_file, destination, db: Database):
     extract_path = extract_zip(osz_file, destination)
-    database.add_set(process_osu_files(extract_path))
+    db.add_set(process_osu_files(extract_path))
 
 
 if __name__ == "__main__":
