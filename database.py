@@ -3,6 +3,7 @@ from Beatmap import Beatmap
 from helpers import json_parser
 from writer import Writer
 import json
+from typing import List
 __author__ = 'Ugrend'
 
 
@@ -13,7 +14,7 @@ class Database:
     unlock_date: int
     username: str
     beatmap_count: int
-    beatmaps: list
+    beatmaps: List[Beatmap]
     user_level: int
 
     @staticmethod
@@ -29,7 +30,20 @@ class Database:
         db.user_level = r.read_int16()
         return db
 
-    def write_binary(self, w: Writer):
+    def add_set(self, beatmaps: List[Beatmap]):
+        if len(beatmaps) == 0:
+            return
+        if not any(b.folder_name == beatmaps[0].folder_name for b in self.beatmaps):
+            self.folder_count += 1
+        for beatmap in beatmaps:
+            self.add_beatmap(beatmap)
+
+    def add_beatmap(self, beatmap: Beatmap):
+        if not any(b.BeatmapID == beatmap.BeatmapID for b in self.beatmaps):
+            self.beatmaps.append(beatmap)
+            self.beatmap_count += 1
+
+    def save(self, w: Writer):
         w.write_int32(self.version)
         w.write_int32(self.folder_count)
         w.write_boolean(self.account_unlocked)
@@ -45,8 +59,8 @@ if __name__ == "__main__":
     f = open('osu!.db', 'rb')
     r = Reader(f)
     db = Database.from_reader(r)
-    #print(json.dumps(db.user_level,default=json_parser,indent=4))
+    print(json.dumps(db.beatmaps[0].Version,default=json_parser,indent=4))
     f.close()
-    f2 = open('test.db', 'wb')
-    w = Writer(f2)
-    db.write_binary(w)
+    #f2 = open('test.db', 'wb')
+    #w = Writer(f2)
+    #db.write_binary(w)
